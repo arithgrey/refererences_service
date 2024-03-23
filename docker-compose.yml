@@ -1,0 +1,45 @@
+version: '3'
+
+services:  
+  redis:
+    container_name: redis_references_service    
+    image: redis/redis-stack-server:latest
+    ports:
+      - "6378:6379"
+    env_file:
+      - .env     
+    networks:
+      - references_network
+
+  db:
+    container_name: postgres_server_references_service
+    image: postgres:latest
+    ports:
+      - "5434:5432"
+    env_file:
+      - .env 
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - references_network
+    
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: references_service:0.1    
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    volumes:
+      - ./:/references_service
+    networks:
+      - references_network    
+
+volumes:
+  postgres_data:
+
+networks:
+  references_network:
+
