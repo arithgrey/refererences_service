@@ -83,21 +83,15 @@ MIDDLEWARE = [
      
 ]
 
-
-REDIS_HOST = config('REDIS_HOST', default='redis_references_service', cast=str)
-REDIS_PORT = config('REDIS_PORT', default=6378, cast=int)
-
 CACHES = {
     'default': {
         'BACKEND': 'django_redis.cache.RedisCache',
-        'LOCATION': f'redis://127.0.0.1:{REDIS_PORT}/1',
+        'LOCATION': f'redis://localhost:6379/0',
         'OPTIONS': {
             'CLIENT_CLASS': 'django_redis.client.DefaultClient',
-        },
-        'KEY_PREFIX': 'references_service', 
+        }
     }
 }
-
 SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
 SESSION_CACHE_ALIAS = 'default'
 
