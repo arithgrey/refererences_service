@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: references-service-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: references-service
+  template:
+    metadata:
+      labels:
+        app: references-service
+    spec:
+      containers:
+        - name: enid-references-service
+          image: enid_references_service:latest              
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8000
+          env:
+            - name: ENVIRONMENT
+              value: development
+            - name: DATABASE_URL              
+              value: postgres://$(POSTGRES_USER):$(POSTGRES_PASSWORD)@$(POSTGRES_HOST):5432/$(POSTGRES_DB)
+          envFrom:
+            - secretRef:
+                name: django-allowed-hosts
+            - secretRef:
+                name: postgres-references-secrets
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: references-service-service
+spec:
+  selector:
+    app: references-service
+  ports:
+    - protocol: TCP
+      port: 8000
+      targetPort: 8000
+  type: ClusterIP
+  type: NodePort
